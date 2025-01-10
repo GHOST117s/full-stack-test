@@ -1,19 +1,30 @@
 <?php
+header('Content-Type: application/json');
+header("Access-Control-Allow-Methods: GET");
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: Content-Type");
+
 include 'db.php';
 
-$sql = "SELECT * FROM posts";
-$result = pg_query($conn, $sql);
+try {
+    $sql = "SELECT * FROM posts ORDER BY id DESC";
+    $result = $conn->query($sql);
 
-if (!$result) {
-    echo "Error: " . pg_last_error();
-} else {
-    $row = pg_fetch_assoc($result);    
-    echo json_encode($row);
-    
-    // while ($row = pg_fetch_assoc($result)) {
-    //     echo "ID: " . $row['id'] . "<br>";
-    //     echo "Title: " . $row['title'] . "<br>";
-    //     echo "Content: " . $row['content'] . "<br>";
-    //     echo "Created At: " . $row['created_at'] . "<br><br>";
-    // }
+
+    if (!$result) {
+        throw new Exception($conn->error);
+    }
+
+    $posts = [];
+    while ($row = $result->fetch_assoc()) {
+        $posts[] = $row;
+    }
+
+    echo json_encode(['success' => true, 'data' => $posts]);
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
 }
+
+$conn->close();
+?>

@@ -1,18 +1,23 @@
 <?php
+header('Content-Type: application/json');
 include 'db.php';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $id = $_POST['id'];
-    $title = $_POST['title'];
-    $content = $_POST['content'];
-
-    $sql = "UPDATE posts SET title='$title', content='$content' WHERE id=$id";
-    $result = pg_query($conn, $sql);
-
-    if (!$result) {
-        echo "Error: " . pg_last_error();
-    } else {
-        echo "Post updated successfully";
+try {
+    if (!isset($_POST['id'])) {
+        throw new Exception("Missing post ID");
     }
+
+    $id = $conn->real_escape_string($_POST['id']);
+    $sql = "DELETE FROM posts WHERE id = $id";
+    if ($conn->query($sql) === TRUE) {
+        echo json_encode(['success' => true, 'message' => 'Post deleted successfully']);
+    } else {
+        throw new Exception($conn->error);
+    }
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
 }
+
+$conn->close();
 ?>

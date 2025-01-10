@@ -2,17 +2,18 @@
 include 'db.php';
 
 $sql = "CREATE TABLE IF NOT EXISTS posts (
-    id SERIAL PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
+    image VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )";
 
-$result = pg_query($conn, $sql);
-
-if (!$result) {
-    die("Migration failed: " . pg_last_error());
-} else {
+if ($conn->query($sql) === TRUE) {
     echo "Migration successful!";
+} else {
+    die("Migration failed: " . $conn->error);
 }
+
+$conn->close();
 ?>
