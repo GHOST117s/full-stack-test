@@ -1,3 +1,5 @@
+# to Start the development server
+php -S localhost:8000
 # Answers to Technical Questions
 
 ## Time Spent and Potential Improvements
