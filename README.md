@@ -1,3 +1,7 @@
+
+# start the server
+ php -S localhost:8000
+
 # Full Stack Test
 WPoets Full Stack Developer Test
 
